@@ -31,7 +31,6 @@ import log from '../../utils/log';
 import { isIOS } from '../../utils/deviceInfo';
 import EventEmitter from '../../utils/events';
 import I18n from '../../i18n';
-import ConnectionBadge from '../../containers/ConnectionBadge';
 import RoomHeaderView, { RightButtons } from './Header';
 import StatusBar from '../../containers/StatusBar';
 import Separator from './Separator';
@@ -68,10 +67,19 @@ export default class RoomView extends LoggedView {
 		const title = navigation.getParam('name');
 		const t = navigation.getParam('t');
 		const tmid = navigation.getParam('tmid');
+		const isFetching = navigation.getParam('isFetching', false);
 		return {
 			headerTitleContainerStyle: styles.headerTitleContainerStyle,
 			headerTitle: (
-				<RoomHeaderView rid={rid} prid={prid} tmid={tmid} title={title} type={t} widthOffset={tmid ? 95 : 130} />
+				<RoomHeaderView
+					rid={rid}
+					prid={prid}
+					tmid={tmid}
+					title={title}
+					type={t}
+					widthOffset={tmid ? 95 : 130}
+					isFetching={isFetching}
+				/>
 			),
 			headerRight: <RightButtons rid={rid} tmid={tmid} t={t} navigation={navigation} />
 		};
@@ -115,6 +123,8 @@ export default class RoomView extends LoggedView {
 		this.beginAnimatingTimeout = setTimeout(() => this.beginAnimating = true, 300);
 		this.messagebox = React.createRef();
 		safeAddListener(this.rooms, this.updateRoom);
+		this.willBlurListener = props.navigation.addListener('willBlur', () => this.mounted = false);
+		this.mounted = false;
 		console.timeEnd(`${ this.constructor.name } init`);
 	}
 
@@ -132,6 +142,7 @@ export default class RoomView extends LoggedView {
 			} else {
 				EventEmitter.addEventListener('connected', this.handleConnected);
 			}
+			this.mounted = true;
 		});
 		console.timeEnd(`${ this.constructor.name } mount`);
 	}
@@ -181,6 +192,7 @@ export default class RoomView extends LoggedView {
 	}
 
 	componentWillUnmount() {
+		this.mounted = false;
 		const { editing, replying } = this.props;
 		if (!editing && this.messagebox && this.messagebox.current && this.messagebox.current.text) {
 			const { text } = this.messagebox.current;
@@ -222,6 +234,9 @@ export default class RoomView extends LoggedView {
 		}
 		if (this.initInteraction && this.initInteraction.cancel) {
 			this.initInteraction.cancel();
+		}
+		if (this.willBlurListener && this.willBlurListener.remove) {
+			this.willBlurListener.remove();
 		}
 		EventEmitter.removeListener('connected', this.handleConnected);
 		console.countReset(`${ this.constructor.name }.render calls`);
@@ -286,6 +301,9 @@ export default class RoomView extends LoggedView {
 	}
 
 	internalSetState = (...args) => {
+		if (!this.mounted) {
+			return;
+		}
 		if (isIOS && this.beginAnimating) {
 			LayoutAnimation.easeInEaseOut();
 		}
@@ -313,14 +331,18 @@ export default class RoomView extends LoggedView {
 		return ((room.prid || useRealName) && room.fname) || room.name;
 	}
 
-	getMessages = () => {
+	getMessages = async() => {
 		const { room } = this.state;
+		const { navigation } = this.props;
 		try {
+			navigation.setParams({ isFetching: true });
 			if (room.lastOpen) {
-				return RocketChat.loadMissedMessages(room);
+				await RocketChat.loadMissedMessages(room);
 			} else {
-				return RocketChat.loadMessagesForRoom(room);
+				await RocketChat.loadMessagesForRoom(room);
 			}
+			navigation.setParams({ isFetching: false });
+			return Promise.resolve();
 		} catch (e) {
 			console.log('TCL: getMessages -> e', e);
 			log('getMessages', e);
@@ -336,7 +358,7 @@ export default class RoomView extends LoggedView {
 		}
 	}
 
-	setLastOpen = lastOpen => this.setState({ lastOpen });
+	setLastOpen = lastOpen => this.internalSetState({ lastOpen });
 
 	joinRoom = async() => {
 		try {
@@ -499,7 +521,7 @@ export default class RoomView extends LoggedView {
 		return (
 			<React.Fragment>
 				{room._id && showActions
-					? <MessageActions room={room} user={user} toast={this.toast} />
+					? <MessageActions room={room} tmid={this.tmid} user={user} toast={this.toast} />
 					: null
 				}
 				{showErrorActions ? <MessageErrorActions /> : null}
@@ -520,7 +542,6 @@ export default class RoomView extends LoggedView {
 				{this.renderActions()}
 				<ReactionPicker onEmojiSelected={this.onReactionPress} />
 				<UploadProgress rid={this.rid} />
-				<ConnectionBadge />
 				<Toast ref={toast => this.toast = toast} />
 			</SafeAreaView>
 		);
