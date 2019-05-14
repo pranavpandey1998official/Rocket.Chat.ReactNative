@@ -58,5 +58,11 @@ export default {
 	},
 	Threads_enabled: {
 		type: null
+	},
+	FileUpload_MediaTypeWhiteList: {
+		type: 'valueAsString'
+	},
+	FileUpload_MaxFileSize: {
+		type: 'valueAsNumber'
 	}
 };
