@@ -286,6 +286,7 @@ export default class UploadModal extends Component {
 				animationOut='fadeOut'
 				useNativeDriver
 				hideModalContentWhileAnimating
+				avoidKeyboard
 			>
 				{(showError) ? this.renderError()
 					: (
