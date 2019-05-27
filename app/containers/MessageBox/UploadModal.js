@@ -105,7 +105,7 @@ export default class UploadModal extends Component {
 		close: PropTypes.func,
 		submit: PropTypes.func,
 		window: PropTypes.object,
-		FileUpload_MediaTypeWhiteList: PropTypes.array,
+		FileUpload_MediaTypeWhiteList: PropTypes.string,
 		FileUpload_MaxFileSize: PropTypes.number
 	}
 
