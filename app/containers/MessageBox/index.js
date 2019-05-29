@@ -404,7 +404,7 @@ class MessageBox extends Component {
 		this.setShowSend(false);
 	}
 
-	sendImageMessage = async(file) => {
+	sendMediaMessage = async(file) => {
 		const { rid, tmid } = this.props;
 		this.setState({ file: { isVisible: false } });
 		const fileInfo = {
@@ -418,7 +418,7 @@ class MessageBox extends Component {
 		try {
 			await RocketChat.sendFileMessage(rid, fileInfo, tmid);
 		} catch (e) {
-			log('err_send_image', e);
+			log('err_send_media_message', e);
 		}
 	}
 
@@ -479,7 +479,7 @@ class MessageBox extends Component {
 			case FILE_LIBRARY_INDEX:
 				this.chooseFromLibrary();
 				break;
-			case this.FILE_INDEX:
+			case FILE_INDEX:
 				this.chooseFile();
 				break;
 			default:
