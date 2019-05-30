@@ -8,7 +8,7 @@ import { emojify } from 'react-emojione';
 import { KeyboardAccessoryView } from 'react-native-keyboard-input';
 import ImagePicker from 'react-native-image-crop-picker';
 import equal from 'deep-equal';
-import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
+import DocumentPicker from 'react-native-document-picker';
 import ActionSheet from 'react-native-action-sheet';
 
 import { userTyping as userTypingAction } from '../../actions/room';
@@ -440,23 +440,24 @@ class MessageBox extends Component {
 		}
 	}
 
-	chooseFile = () => {
-		DocumentPicker.show({
-			filetype: [DocumentPickerUtil.allFiles()]
-		}, (error, res) => {
-		// Android
-			if (!error) {
-				this.showUploadModal({
-					filename: res.fileName,
-					size: res.fileSize,
-					mime: res.type,
-					path: res.uri
-				});
-			} else {
+	chooseFile = async() => {
+		try {
+			const res = await DocumentPicker.pick({
+				type: [DocumentPicker.types.allFiles]
+			});
+			this.showUploadModal({
+				filename: res.name,
+				size: res.size,
+				mime: res.type,
+				path: res.uri
+			});
+		} catch (error) {
+			if (!DocumentPicker.isCancel(error)) {
 				log('chooseFile', error);
 			}
-		});
+		}
 	}
+
 
 	showUploadModal = (file) => {
 		this.setState({ file: { ...file, isVisible: true } });
