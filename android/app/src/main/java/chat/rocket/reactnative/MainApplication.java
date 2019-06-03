@@ -15,6 +15,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 
+import com.reactnativejitsimeet.JitsiMeetPackage;
 import com.AlexanderZaytsev.RNI18n.RNI18nPackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
@@ -40,6 +41,7 @@ import android.os.Bundle;
 
 import java.util.Arrays;
 import java.util.List;
+import javax.annotation.Nullable;
 
 public class MainApplication extends Application implements ReactApplication, INotificationsApplication {
 
@@ -53,6 +55,7 @@ public class MainApplication extends Application implements ReactApplication, IN
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new JitsiMeetPackage(),
             new RNFirebasePackage(),
             new RNFirebaseCrashlyticsPackage(),
             new RNFirebaseAnalyticsPackage(),
@@ -81,6 +84,11 @@ public class MainApplication extends Application implements ReactApplication, IN
     @Override
     protected String getJSMainModuleName() {
       return "index";
+    }
+    
+    @Override
+    protected @Nullable String getBundleAssetName() {
+      return "app.bundle";
     }
   };
 

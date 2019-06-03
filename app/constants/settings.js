@@ -61,5 +61,20 @@ export default {
 	},
 	API_Gitlab_URL: {
 		type: 'valueAsString'
+	},
+	Jitsi_Enabled: {
+		type: 'valueAsBoolean'
+	},
+	Jisti_Enable_Channels: {
+		type: 'valueAsBoolean'
+	},
+	Jitsi_SSL: {
+		type: 'valueAsBoolean'
+	},
+	Jitsi_Domain: {
+		type: 'valueAsString'
+	},
+	Jitsi_URL_Room_Prefix: {
+		type: 'valueAsString'
 	}
 };

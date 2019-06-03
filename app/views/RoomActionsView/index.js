@@ -6,6 +6,7 @@ import {
 import { connect } from 'react-redux';
 import { SafeAreaView } from 'react-navigation';
 import equal from 'deep-equal';
+import JitsiMeet, { JitsiMeetEvents } from 'react-native-jitsi-meet';
 
 import { leaveRoom as leaveRoomAction } from '../../actions/room';
 import styles from './styles';
@@ -31,7 +32,11 @@ const renderSeparator = () => <View style={styles.separator} />;
 		id: state.login.user && state.login.user.id,
 		token: state.login.user && state.login.user.token
 	},
-	baseUrl: state.settings.Site_Url || state.server ? state.server.server : ''
+	baseUrl: state.settings.Site_Url || state.server ? state.server.server : '',
+	Jitsi_Enabled: state.settings.Jitsi_Enabled,
+	Jisti_Enable_Channels: state.settings.Jisti_Enable_Channels,
+	Jitsi_Domain: state.settings.Jitsi_Domain,
+	Jitsi_URL_Room_Prefix: state.settings.Jitsi_URL_Room_Prefix
 }), dispatch => ({
 	leaveRoom: (rid, t) => dispatch(leaveRoomAction(rid, t))
 }))
@@ -47,7 +52,11 @@ export default class RoomActionsView extends React.Component {
 			id: PropTypes.string,
 			token: PropTypes.string
 		}),
-		leaveRoom: PropTypes.func
+		leaveRoom: PropTypes.func,
+		Jitsi_Enabled: PropTypes.bool,
+		Jisti_Enable_Channels: PropTypes.bool,
+		Jitsi_Domain: PropTypes.string,
+		Jitsi_URL_Room_Prefix: PropTypes.string
 	}
 
 	constructor(props) {
@@ -203,7 +212,7 @@ export default class RoomActionsView extends React.Component {
 				{
 					icon: 'video',
 					name: I18n.t('Video_call'),
-					disabled: true,
+					event: this.initiateVideoCall,
 					testID: 'room-actions-video'
 				}
 			],
@@ -379,6 +388,20 @@ export default class RoomActionsView extends React.Component {
 			]
 		);
 	}
+
+	initiateVideoCall = () => {
+		JitsiMeet.initialize();
+		JitsiMeetEvents.addListener('CONFERENCE_LEFT', () => {
+			log('CONFERENCE_LEFT');
+		});
+		setTimeout(() => {
+			try {
+				JitsiMeet.call('https://meet.jit.si/ScaryFungiFinishAlone');
+			} catch (e) {
+				log('CONFERENCE_LEFT');
+			}
+		}, 5000);
+	};
 
 	toggleNotifications = () => {
 		const { room } = this.state;
