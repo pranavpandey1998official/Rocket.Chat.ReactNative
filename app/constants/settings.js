@@ -64,5 +64,8 @@ export default {
 	},
 	FileUpload_MaxFileSize: {
 		type: 'valueAsNumber'
+	},
+	API_Gitlab_URL: {
+		type: 'valueAsString'
 	}
 };
