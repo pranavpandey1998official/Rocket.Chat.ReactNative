@@ -78,7 +78,6 @@ export async function sendFileMessage(rid, fileInfo, tmid) {
 		await promises[fileInfo.path];
 
 		const completeResult = await _ufsComplete.call(this, result.fileId, fileInfo.store, result.token);
-
 		await _sendFileMessage.call(this, completeResult.rid, {
 			_id: completeResult._id,
 			type: completeResult.type,

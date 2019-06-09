@@ -79,6 +79,8 @@ const styles = StyleSheet.create({
 	},
 	fileMime: {
 		color: COLOR_TEXT,
+		...sharedStyles.textColorTitle,
+		...sharedStyles.textBold,
 		textAlign: 'center',
 		fontSize: 20,
 		marginBottom: 20
