@@ -18,7 +18,6 @@ import com.facebook.soloader.SoLoader;
 
 import com.AlexanderZaytsev.RNI18n.RNI18nPackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
-import com.RNFetchBlob.RNFetchBlobPackage;
 import com.brentvatne.react.ReactVideoPackage;
 import com.dylanvann.fastimage.FastImageViewPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -36,6 +35,12 @@ import com.actionsheet.ActionSheetPackage;
 import io.realm.react.RealmReactPackage;
 import com.swmansion.rnscreens.RNScreensPackage;
 
+import chat.rocket.reactnative.generated.BasePackageList;
+
+import org.unimodules.adapters.react.ModuleRegistryAdapter;
+import org.unimodules.adapters.react.ReactModuleRegistryProvider;
+import org.unimodules.core.interfaces.SingletonModule;
+
 import android.content.Context;
 import android.os.Bundle;
 
@@ -43,6 +48,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication, INotificationsApplication {
+
+  private final ReactModuleRegistryProvider mModuleRegistryProvider = new ReactModuleRegistryProvider(new BasePackageList().getPackageList(), Arrays.<SingletonModule>asList());
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
@@ -68,15 +75,14 @@ public class MainApplication extends Application implements ReactApplication, IN
 					new RNDeviceInfo(),
 					new PickerPackage(),
 					new VectorIconsPackage(),
-					new RNFetchBlobPackage(),
 					new RealmReactPackage(),
 					new ReactVideoPackage(),
 					new ReactNativeAudioPackage(),
 					new KeyboardInputPackage(MainApplication.this),
-					new RocketChatNativePackage(),
 					new FastImageViewPackage(),
 					new RNI18nPackage(),
-          new RNNotificationsPackage(MainApplication.this)
+          new RNNotificationsPackage(MainApplication.this),
+          new ModuleRegistryAdapter(mModuleRegistryProvider)
       );
     }
 
