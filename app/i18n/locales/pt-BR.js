@@ -322,6 +322,7 @@ export default {
 	Started_discussion: 'Iniciou uma discussão:',
 	Submit: 'Enviar',
 	Take_a_photo: 'Tirar uma foto',
+	Take_a_video: 'Gravar um vídeo',
 	Terms_of_Service: ' Termos de Serviço ',
 	The_URL_is_invalid: 'A URL fornecida é inválida ou não acessível. Por favor tente novamente, mas com uma url diferente.',
 	There_was_an_error_while_action: 'Aconteceu um erro {{action}}!',
