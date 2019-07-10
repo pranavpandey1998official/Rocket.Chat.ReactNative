@@ -495,7 +495,6 @@ class MessageBox extends Component {
 	}
 
 	takePhoto = async() => {
-		console.warn('take photo');
 		try {
 			const image = await ImagePicker.openCamera(imagePickerConfig);
 			this.showUploadModal(image);
